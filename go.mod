@@ -1,4 +1,4 @@
-module github.com/troubly/AoC/2022/01
+module github.com/troubly/AoC
 
 go 1.19
 

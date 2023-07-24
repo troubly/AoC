@@ -45,7 +45,7 @@ func run() error {
 
 		c, err := strconv.ParseInt(l, 10, 64)
 		if err != nil {
-			return errors.Wrapf(err, "strconv.ParseInt (line %d)", i)
+			return errors.Wrapf(err, "line %d: strconv.ParseInt", i+1)
 		}
 
 		calories += c
