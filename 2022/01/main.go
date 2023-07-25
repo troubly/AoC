@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"sort"
@@ -22,20 +23,23 @@ func main() {
 }
 
 func run() error {
-	data, err := os.ReadFile(inputFilename)
+	f, err := os.Open(inputFilename)
 	if err != nil {
-		return errors.Wrap(err, "os.ReadFile")
+		return errors.Wrap(err, "os.Open")
 	}
 
-	lines := strings.Split(string(data), "\n")
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
 
 	var (
 		caloriesByElf []int64
 		calories      int64
 	)
 
-	for i, l := range lines {
-		l := strings.TrimSpace(l)
+	for scanner.Scan() {
+		l := strings.TrimSpace(scanner.Text())
+
 		if l == "" {
 			caloriesByElf = append(caloriesByElf, calories)
 			calories = 0
@@ -45,7 +49,7 @@ func run() error {
 
 		c, err := strconv.ParseInt(l, 10, 64)
 		if err != nil {
-			return errors.Wrapf(err, "line %d: strconv.ParseInt", i+1)
+			return errors.Wrap(err, "strconv.ParseInt")
 		}
 
 		calories += c

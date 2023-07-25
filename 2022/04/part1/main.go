@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"regexp"
@@ -30,34 +31,34 @@ func main() {
 }
 
 func run() error {
-	data, err := os.ReadFile(inputFilename)
+	f, err := os.Open(inputFilename)
 	if err != nil {
-		return errors.Wrap(err, "os.ReadFile")
+		return errors.Wrap(err, "os.Open")
 	}
 
-	lines := strings.Split(string(data), "\n")
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
 
 	var nbFullyContains int
 
-	for i, pairs := range lines {
-		if pairs == "" {
-			continue
-		}
+	for scanner.Scan() {
+		pairs := scanner.Text()
 
 		if !pairsRegexp.MatchString(pairs) {
-			return fmt.Errorf("line %d: unexpected format", i+1)
+			return errors.New("unexpected format")
 		}
 
 		p := strings.Split(pairs, ",")
 
 		intvl1, err := intervalFromPairString(p[0])
 		if err != nil {
-			return errors.Wrapf(err, "line %d: intervalFromPairString", i+1)
+			return errors.Wrap(err, "intervalFromPairString")
 		}
 
 		intvl2, err := intervalFromPairString(p[1])
 		if err != nil {
-			return errors.Wrapf(err, "line %d: intervalFromPairString", i+1)
+			return errors.Wrap(err, "intervalFromPairString")
 		}
 
 		if intvl1.fullyContains(intvl2) || intvl2.fullyContains(intvl1) {

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"strings"
@@ -19,28 +20,28 @@ func main() {
 }
 
 func run() error {
-	data, err := os.ReadFile(inputFilename)
+	f, err := os.Open(inputFilename)
 	if err != nil {
-		return errors.Wrap(err, "os.ReadFile")
+		return errors.Wrap(err, "os.Open")
 	}
 
-	lines := strings.Split(string(data), "\n")
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
 
 	var score int
 
-	for i, l := range lines {
-		if l == "" {
-			continue
-		}
+	for scanner.Scan() {
+		l := scanner.Text()
 
 		tokens := strings.Split(l, " ")
 		if len(tokens) != 2 {
-			return fmt.Errorf("line %d: unexpected input format", i+1)
+			return errors.New("unexpected input format")
 		}
 
 		s, err := computeRoundScore(tokens[0], tokens[1])
 		if err != nil {
-			return fmt.Errorf("line %d: computeRoundScore", i+1)
+			return errors.Wrap(err, "computeRoundScore")
 		}
 
 		score += s

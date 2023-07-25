@@ -1,10 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"regexp"
-	"strings"
 	"unicode"
 
 	"github.com/pkg/errors"
@@ -17,7 +17,7 @@ const (
 )
 
 var (
-	lettersRegexp = regexp.MustCompile("^[a-zA-Z]+$")
+	lettersRegexp = regexp.MustCompile("^[a-zA-Z]*$")
 )
 
 func main() {
@@ -27,28 +27,28 @@ func main() {
 }
 
 func run() error {
-	data, err := os.ReadFile(inputFilename)
+	f, err := os.Open(inputFilename)
 	if err != nil {
-		return errors.Wrap(err, "os.ReadFile")
+		return errors.Wrap(err, "os.Open")
 	}
 
-	lines := strings.Split(string(data), "\n")
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
 
 	var prioritiesSum int
 
-	for i, rucksack := range lines {
-		if rucksack == "" {
-			continue
-		}
+	for scanner.Scan() {
+		rucksack := scanner.Text()
 
 		rsl := len(rucksack)
 
 		if rsl == 0 || rsl%2 != 0 {
-			return fmt.Errorf("line %d: unexpected len %d", i+1, rsl)
+			return fmt.Errorf("unexpected len %d", rsl)
 		}
 
 		if !lettersRegexp.MatchString(rucksack) {
-			return fmt.Errorf("line %d: unexpected format", i+1)
+			return errors.New("unexpected format")
 		}
 
 		rawRs := []rune(rucksack)

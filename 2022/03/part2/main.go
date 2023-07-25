@@ -1,10 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"regexp"
-	"strings"
 	"unicode"
 
 	"github.com/pkg/errors"
@@ -28,32 +28,32 @@ func main() {
 }
 
 func run() error {
-	data, err := os.ReadFile(inputFilename)
+	f, err := os.Open(inputFilename)
 	if err != nil {
-		return errors.Wrap(err, "os.ReadFile")
+		return errors.Wrap(err, "os.Open")
 	}
 
-	lines := strings.Split(string(data), "\n")
+	defer f.Close()
 
-	var prioritiesSum int
+	scanner := bufio.NewScanner(f)
 
-	for i := 0; i < len(lines); i += elfGroupSize {
-		low, high := i, i+elfGroupSize
-		if high > len(lines) {
-			high = len(lines)
+	var (
+		prioritiesSum int
+		groupItems    = make([]string, 0, elfGroupSize)
+	)
+
+	for scanner.Scan() {
+		groupItems = append(groupItems, scanner.Text())
+
+		if len(groupItems) < elfGroupSize {
+			continue
 		}
-
-		groupItems := lines[low:high]
 
 		itemTypeCount := make(map[rune]int)
 
 		for _, rucksack := range groupItems {
-			if rucksack == "" {
-				continue
-			}
-
 			if !lettersRegexp.MatchString(rucksack) {
-				return fmt.Errorf("line %d: unexpected format", i+1)
+				return errors.New("unexpected format")
 			}
 
 			items := make(map[rune]struct{})
@@ -70,12 +70,15 @@ func run() error {
 		}
 
 		for item, count := range itemTypeCount {
-			if count < 3 {
+			if count < elfGroupSize {
 				continue
 			}
 
 			prioritiesSum += computePriority(item)
 		}
+
+		// reset
+		groupItems = make([]string, 0, elfGroupSize)
 	}
 
 	fmt.Printf("prioritiesSum: %d\n", prioritiesSum)
