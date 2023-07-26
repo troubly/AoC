@@ -86,13 +86,20 @@ func run() error {
 		from, _ := strconv.ParseInt(res[2], 10, 64)
 		to, _ := strconv.ParseInt(res[3], 10, 64)
 
+		// could also use another tmp stack x)
+		cratesToMove := make([]string, nbPop)
+
 		for i := 0; i < int(nbPop); i++ {
 			v, err := stacks[from-1].pop()
 			if err != nil {
 				return errors.Wrap(err, "stack.pop")
 			}
 
-			stacks[to-1].push(v)
+			cratesToMove[i] = v
+		}
+
+		for i := len(cratesToMove) - 1; i >= 0; i-- {
+			stacks[to-1].push(cratesToMove[i])
 		}
 	}
 
