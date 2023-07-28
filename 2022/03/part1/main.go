@@ -17,7 +17,7 @@ const (
 )
 
 var (
-	lettersRegexp = regexp.MustCompile("^[a-zA-Z]*$")
+	lettersRegexp = regexp.MustCompile("^[a-zA-Z]+$")
 )
 
 func main() {
