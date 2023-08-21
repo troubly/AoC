@@ -58,9 +58,7 @@ func run() error {
 
 			items := make(map[rune]struct{})
 
-			rawRs := []rune(rucksack)
-
-			for _, item := range rawRs {
+			for _, item := range rucksack {
 				items[item] = struct{}{}
 			}
 

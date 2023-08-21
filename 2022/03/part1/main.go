@@ -51,9 +51,7 @@ func run() error {
 			return errors.New("unexpected format")
 		}
 
-		rawRs := []rune(rucksack)
-
-		compt1, compt2 := rawRs[0:rsl/2], rawRs[rsl/2:rsl]
+		compt1, compt2 := rucksack[0:rsl/2], rucksack[rsl/2:rsl]
 
 		items := make(map[rune]struct{}, rsl/2)
 		for _, item := range compt1 {
