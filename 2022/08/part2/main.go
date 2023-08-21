@@ -4,15 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"regexp"
 
 	"github.com/pkg/errors"
-)
-
-var (
-	lsRegexp      = regexp.MustCompile(`^\$ ls$`)
-	cdRegexp      = regexp.MustCompile(`(?s)^\$ cd (/|[a-zA-Z]+|\.\.)$`)
-	contentRegexp = regexp.MustCompile(`(?s)^(dir|[0-9]+) (.+)$`)
 )
 
 const (
